@@ -33,7 +33,7 @@
                     <p class="text-gray-700 text-sm" id="desc-${index}">${desc}</p>
                     <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                   </div>
-                  <button onclick="toggleExpand(${index})" class="mt-2 text-blue-500 text-sm">展開</button>
+                  <button onclick="toggleExpand(${index})" class="mt-2 text-blue-500 text-sm">...More</button>
                 </div>` : ''}
               </div>
             </div>
@@ -50,13 +50,13 @@
         if (wrapper.classList.contains('max-h-[6rem]')) {
           wrapper.classList.remove('max-h-[6rem]', 'overflow-hidden')
           wrapper.querySelector('div')?.remove()
-          btn.textContent = '收合'
+          btn.textContent = 'Less'
         } else {
           wrapper.classList.add('max-h-[6rem]', 'overflow-hidden')
           const fade = document.createElement('div')
           fade.className = 'absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none'
           wrapper.appendChild(fade)
-          btn.textContent = '展開'
+          btn.textContent = '...More'
         }
       }
 
