@@ -18,6 +18,9 @@
           const hex = item["Hex Code"] || '#d1d5db'
           const image = item.Image
 
+          const previewLength = Math.ceil(desc.length * 0.33)
+          const previewText = desc.slice(0, previewLength)
+
           const visual = image
             ? `<img src="${image}" class="w-full h-48 object-cover" />`
             : `<div class="w-full h-48" style="background-color:${hex};"></div>`
@@ -29,11 +32,10 @@
                 <h2 class="text-xl font-semibold mb-2">${title}</h2>
                 ${desc ? `
                 <div>
-                  <div class="relative max-h-[6rem] overflow-hidden" id="desc-wrap-${index}">
-                    <p class="text-gray-700 text-sm" id="desc-${index}">${desc}</p>
-                    <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-                  </div>
-                  <button onclick="toggleExpand(${index})" class="mt-2 text-blue-500 text-sm">...More</button>
+                  <p class="text-gray-700 text-sm">
+                    <span id="preview-${index}">${previewText}</span><span id="full-${index}" class="hidden">${desc}</span>
+                  </p>
+                  <button onclick="toggleExpand(${index})" class="mt-2 text-blue-500 text-sm">...Moreㄍㄟ</button>
                 </div>` : ''}
               </div>
             </div>
@@ -44,19 +46,18 @@
       }
 
       function toggleExpand(index) {
-        const wrapper = document.getElementById(`desc-wrap-${index}`)
-        const btn = wrapper.nextElementSibling
+        const preview = document.getElementById(`preview-${index}`)
+        const full = document.getElementById(`full-${index}`)
+        const btn = full.parentElement.nextElementSibling
 
-        if (wrapper.classList.contains('max-h-[6rem]')) {
-          wrapper.classList.remove('max-h-[6rem]', 'overflow-hidden')
-          wrapper.querySelector('div')?.remove()
-          btn.textContent = 'Less'
-        } else {
-          wrapper.classList.add('max-h-[6rem]', 'overflow-hidden')
-          const fade = document.createElement('div')
-          fade.className = 'absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none'
-          wrapper.appendChild(fade)
+        if (preview.classList.contains('hidden')) {
+          preview.classList.remove('hidden')
+          full.classList.add('hidden')
           btn.textContent = '...More'
+        } else {
+          preview.classList.add('hidden')
+          full.classList.remove('hidden')
+          btn.textContent = 'Less'
         }
       }
 
@@ -85,3 +86,4 @@
     </div>
   </body>
 </html>
+
