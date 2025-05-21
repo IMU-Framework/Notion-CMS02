@@ -10,9 +10,18 @@
         const res = await fetch('/api/notion')
         const data = await res.json()
 
-        const container = document.getElementById('card-container')
+        const container = document.getElementById('column-wrapper')
+        container.innerHTML = ''
 
-        const cards = data.map((item, index) => {
+        const numCols = getNumColumns()
+        const columns = Array.from({ length: numCols }, () => {
+          const col = document.createElement('div')
+          col.className = 'flex-1 space-y-4'
+          container.appendChild(col)
+          return col
+        })
+
+        data.forEach((item, index) => {
           const title = item.Title || 'Untitled'
           const desc = item.Description || ''
           const hex = item["Hex Code"] || '#d1d5db'
@@ -25,24 +34,25 @@
             ? `<img src="${image}" class="w-full h-48 object-cover" />`
             : `<div class="w-full h-48" style="background-color:${hex};"></div>`
 
-          return `
-            <div class="break-inside-avoid bg-white rounded-xl shadow-md overflow-hidden mb-4">
-              ${visual}
-              <div class="p-4">
-                <h2 class="text-xl font-semibold mb-2">${title}</h2>
-                ${desc ? `
-                <div>
-                  <p class="text-gray-700 text-sm">
-                    <span id="preview-${index}">${previewText}</span><span id="full-${index}" class="hidden">${desc}</span>
-                  </p>
-                  <button onclick="toggleExpand(${index})" class="mt-2 text-blue-500 text-sm">...More</button>
-                </div>` : ''}
-              </div>
+          const card = document.createElement('div')
+          card.className = 'break-inside-avoid bg-white rounded-xl shadow-md overflow-hidden mb-4'
+          card.innerHTML = `
+            ${visual}
+            <div class="p-4">
+              <h2 class="text-xl font-semibold mb-2">${title}</h2>
+              ${desc ? `
+              <div>
+                <p class="text-gray-700 text-sm">
+                  <span id="preview-${index}">${previewText}</span><span id="full-${index}" class="hidden">${desc}</span>
+                </p>
+                <button onclick="toggleExpand(${index})" class="mt-2 text-blue-500 text-sm">...More</button>
+              </div>` : ''}
             </div>
           `
-        }).join('')
 
-        container.innerHTML = cards
+          const colIndex = index % numCols
+          columns[colIndex].appendChild(card)
+        })
       }
 
       function toggleExpand(index) {
@@ -61,29 +71,20 @@
         }
       }
 
+      function getNumColumns() {
+        const width = window.innerWidth
+        if (width >= 768) return 3
+        if (width >= 640) return 2
+        return 1
+      }
+
+      window.addEventListener('resize', fetchCards)
       window.onload = fetchCards
     </script>
-    <style>
-      .columns-responsive {
-        column-count: 1;
-        column-gap: 1rem;
-      }
-      @media (min-width: 640px) {
-        .columns-responsive {
-          column-count: 2;
-        }
-      }
-      @media (min-width: 768px) {
-        .columns-responsive {
-          column-count: 3;
-        }
-      }
-    </style>
   </head>
   <body class="bg-gray-50 p-6">
-    <div class="max-w-5xl mx-auto columns-responsive space-y-4" id="card-container">
-      <!-- Cards will be injected here -->
+    <div class="max-w-5xl mx-auto">
+      <div id="column-wrapper" class="flex gap-4"></div>
     </div>
   </body>
 </html>
-
