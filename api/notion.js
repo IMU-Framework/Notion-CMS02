@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       }
     })
 
-    const sortedCards = cards.sort((a, b) => a.ID - b.ID)
+    const sortedCards = cards.sort((a, b) => b.ID - a.ID)
     res.status(200).json(sortedCards)
   } catch (error) {
     console.error('Error fetching Notion data:', error)
