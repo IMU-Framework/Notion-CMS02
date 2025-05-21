@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       const props = page.properties
 
       const getPlainText = (field) =>
-        props[field]?.rich_text?.[0]?.plain_text || ''
+        props[field]?.rich_text?.[0]?.plain_text?.trim() || ''
 
       const getTitle = () =>
         props['Title']?.title?.[0]?.plain_text?.trim() || 'Untitled'
@@ -28,8 +28,14 @@ export default async function handler(req, res) {
 
       const getHex = () => getPlainText('Hex Code')
 
+      const getID = () => {
+        const idText = getPlainText('ID')
+        const parsed = parseInt(idText, 10)
+        return isNaN(parsed) ? 9999 : parsed
+      }
+
       return {
-        ID: props['ID']?.number ?? 9999,
+        ID: getID(),
         Title: getTitle(),
         Description: getPlainText('Description'),
         Image: getImage(),
@@ -38,7 +44,7 @@ export default async function handler(req, res) {
       }
     })
 
-    const sortedCards = cards.sort((a, b) => b.ID - a.ID)
+    const sortedCards = cards.sort((a, b) => a.ID - b.ID)
     res.status(200).json(sortedCards)
   } catch (error) {
     console.error('Error fetching Notion data:', error)
